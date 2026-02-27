@@ -1,0 +1,43 @@
+name: Autograde Assignment
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  autograde:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install dependencies
+        run: |
+          pip install "nbgrader>=0.9"
+          pip install -r requirements.txt
+
+      - name: Set up nbgrader course structure
+        run: |
+          mkdir -p source/assignment
+          mkdir -p submitted/student/assignment
+          cp assignment.ipynb source/assignment/assignment.ipynb
+          cp assignment.ipynb submitted/student/assignment/assignment.ipynb
+
+      - name: Generate student release version
+        run: nbgrader generate_assignment assignment --force
+
+      - name: Autograde submission
+        run: nbgrader autograde assignment --student student --force
+
+      - name: Export grades
+        run: nbgrader export
