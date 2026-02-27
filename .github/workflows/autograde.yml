@@ -1,10 +1,11 @@
-name: Autograde Assignment
+name: Classroom Autograding
 
 on:
   push:
     branches: ["**"]
   pull_request:
     branches: ["**"]
+  workflow_dispatch:
 
 jobs:
   autograde:
@@ -19,25 +20,12 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          pip install "nbgrader>=0.9"
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Set up nbgrader course structure
-        run: |
-          mkdir -p source/assignment
-          mkdir -p submitted/student/assignment
-          cp assignment.ipynb source/assignment/assignment.ipynb
-          cp assignment.ipynb submitted/student/assignment/assignment.ipynb
-
-      - name: Generate student release version
-        run: nbgrader generate_assignment assignment --force
-
-      - name: Autograde submission
-        run: nbgrader autograde assignment --student student --force
-
-      - name: Export grades
-        run: nbgrader export
+      - name: Run classroom autograding tests
+        uses: education/autograding@v1
