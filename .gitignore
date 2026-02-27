@@ -78,6 +78,14 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+# nbgrader
+gradebook.db
+grades.csv
+release/
+autograded/
+submitted/
+source/
+
 # IPython
 profile_default/
 ipython_config.py
